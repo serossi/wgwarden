@@ -1,0 +1,46 @@
+name: Multi-Platform Build
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers when you push a tag (e.g., v1.0)
+  workflow_dispatch: # Allows you to run it manually for testing
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+            artifact_name: my_app.exe
+          - os: ubuntu-latest
+            artifact_name: my_app_linux
+          - os: macos-latest
+            artifact_name: my_app_mac
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller cryptography qrcode[pil] Pillow
+
+      - name: Build with PyInstaller
+        # --noconsole hides the black terminal window for GUI apps
+        # --collect-all is helpful for cryptography to ensure all backends are included
+        run: pyinstaller --onefile --noconsole --name ${{ matrix.artifact_name }} your_script.py
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-build
+          path: dist/${{ matrix.artifact_name }}
