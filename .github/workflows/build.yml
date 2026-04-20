@@ -37,7 +37,7 @@ jobs:
       - name: Build with PyInstaller
         # --noconsole hides the black terminal window for GUI apps
         # --collect-all is helpful for cryptography to ensure all backends are included
-        run: pyinstaller --onefile --noconsole --name ${{ matrix.artifact_name }} your_script.py
+        run: pyinstaller --onefile --noconsole --name ${{ matrix.artifact_name }} src/wgwarden.py
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
