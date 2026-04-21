@@ -5,12 +5,17 @@ import os
 import base64
 import qrcode # pip install qrcode[pil]
 from PIL import ImageTk
+import sys
 
 # Native Key Generation
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import x25519
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if getattr(sys, 'frozen', False):
+    SCRIPT_DIR = os.path.dirname(sys.executable)
+else:
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 DB_FILE = os.path.join(SCRIPT_DIR, "wireguard_warden.json")
 
 class WGWarden:
