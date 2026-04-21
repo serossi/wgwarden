@@ -14,11 +14,11 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
         include:
           - os: windows-latest
-            artifact_name: my_app.exe
+            artifact_name: wgwarden.exe
           - os: ubuntu-latest
-            artifact_name: my_app_linux
+            artifact_name: wgwarden
           - os: macos-latest
-            artifact_name: my_app_mac
+            artifact_name: wgwarden
 
     steps:
       - name: Checkout code
