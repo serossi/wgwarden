@@ -6,6 +6,7 @@ on:
     tags:
       - 'v*' 
   workflow_dispatch:
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -15,11 +16,14 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
         include:
           - os: windows-latest
-            artifact_name: wgwarden-win.exe
+            short_name: wgwarden-win
+            extension: .exe
           - os: ubuntu-latest
-            artifact_name: wgwarden-linux
+            short_name: wgwarden-linux
+            extension: ""
           - os: macos-latest
-            artifact_name: wgwarden-mac
+            short_name: wgwarden-mac
+            extension: ""
 
     steps:
       - name: Checkout code
@@ -35,14 +39,17 @@ jobs:
           pip install pyinstaller cryptography qrcode[pil] Pillow
 
       - name: Build with PyInstaller
-        run: pyinstaller --onefile --noconsole --name ${{ matrix.artifact_name }} src/wgwarden.py
+        # This creates a file like "wgwarden-win-v0.3.3"
+        run: pyinstaller --onefile --noconsole --name "${{ matrix.short_name }}-${{ github.ref_name || 'dev' }}" src/wgwarden.py
 
       - name: Release
         uses: softprops/action-gh-release@v2
+        # Only run if this is a tag push
         if: startsWith(github.ref, 'refs/tags/')
         with:
           tag_name: ${{ github.ref_name }}
-          files: dist/${{ matrix.artifact_name }}-${{ github.ref_name }}*
+          # The wildcard * catches the extension (.exe) automatically
+          files: dist/${{ matrix.short_name }}-${{ github.ref_name }}*
           append_body: true 
           make_latest: true
         env:
