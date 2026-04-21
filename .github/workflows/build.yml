@@ -3,8 +3,9 @@ name: Multi-Platform Build
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # Allows you to run it manually for testing
-
+    tags:
+      - 'v*' 
+  workflow_dispatch:
 jobs:
   build:
     name: Build on ${{ matrix.os }}
